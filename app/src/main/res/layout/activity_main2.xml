@@ -1,0 +1,139 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="0dp"
+    android:id="@+id/mainfragment"
+    android:background="@color/grey">
+
+
+    <ListView
+        android:id="@+id/lvProducts"
+        android:layout_marginTop="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/linear_top"
+        android:layout_marginBottom="110dp"
+        android:focusableInTouchMode="false"
+        android:isScrollContainer="false"
+        android:padding="0dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="43dp"
+        android:id="@+id/linear_top"
+        >
+
+        <EditText
+            android:id="@+id/barKodInput"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:focusable="true"
+            android:hint="Unesite bar kod"
+            android:inputType="textPersonName"
+            android:maxLines="2"
+            android:paddingLeft="8dp"
+            android:shadowColor="@color/blue"
+            android:text=""
+            android:textColorHint="@color/grey1"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/Ok_button"
+            android:layout_width="0dp"
+            android:layout_weight="0.15"
+            android:layout_height="43dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/barKodInput"
+            android:background="@color/colorPrimary"
+            android:clickable="false"
+            android:text="OK"
+
+            android:layout_marginRight="12dp"
+            android:textColor="@android:color/white"
+            android:textSize="17dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="43dp"
+        android:weightSum="1"
+    android:layout_above="@+id/bottom_panel"
+        android:id="@+id/linear_total"
+        >
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="0dp"
+            android:layout_weight="0.25"
+            android:layout_height="wrap_content"
+            android:text="UKUPNO: "
+            android:textStyle="bold"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
+            android:textColor="@android:color/black"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/tvTotalPrice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:layout_weight="0.70"
+            android:gravity="left"
+            android:textColor="@android:color/black"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:id="@+id/bottom_panel"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="43dp"
+        android:layout_marginBottom="8dp"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/zavrsi"
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:textColor="@android:color/white"
+            android:textSize="13sp"
+            android:layout_marginRight="10dp"
+            android:text="Racun"/>
+
+        <Button
+            android:id="@+id/clearAll"
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="13sp"
+            android:layout_marginRight="10dp"
+            android:text="KREIRAJ NOVI RAČUN"/>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,91 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp"
+    android:id="@+id/container_name"
+    android:background="@color/grey"
+
+    tools:context="com.example.ajdin.probafragmenti.Activities.NameFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/linearLayout"></LinearLayout>
+    <Button
+        android:id="@+id/Confirm_button"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:stateListAnimator="@null"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/imeInput"
+        android:background="@color/colorPrimary"
+        android:clickable="false"
+        android:text="OK"
+        android:layout_marginLeft="13dp"
+        android:layout_marginRight="8dp"
+        android:textColor="@android:color/white"
+        android:textSize="16sp" />
+
+
+    <EditText
+        android:id="@+id/imeInput"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_alignStart="@+id/textView2"
+        android:layout_below="@+id/linearLayout"
+        android:layout_marginTop="12dp"
+        android:cursorVisible="true"
+        android:ems="10"
+        android:hint="Unesite ime kupca"
+        android:inputType="textPersonName"
+        android:maxLines="2"
+        android:paddingLeft="10dp"
+        android:text="" />
+
+
+    <ListView
+        android:id="@+id/list_history"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/imeInput"
+        android:layout_marginTop="40dp"
+        android:divider="@null"
+        android:focusableInTouchMode="false"
+        android:isScrollContainer="false"
+ />
+    <TextView
+        android:id="@+id/emptyElement2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/imeInput"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/screenshot_3"
+        android:textSize="19.0sp"
+        android:visibility="gone" />
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/Confirm_button"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/Confirm_button"
+        android:layout_below="@+id/imeInput"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="10dp"
+        android:textSize="16sp"
+        android:textColor="@color/grey1"
+        android:text="Odaberite kupca za nastavak kupovine" />
+
+
+</RelativeLayout>

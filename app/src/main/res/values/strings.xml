@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">AndroidRKSApp</string>
+    <string name="tab_text_1">NOVI RACUN</string>
+    <string name="tab_text_2">PREGLED HISTORIJE</string>
+    <string name="tab_text_3">Tab 3</string>
+    <string name="acces_tokengenerated">aLRppJLoiTAAAAAAAAAABt0hedpD0SdE5AcEPMR5neXz-_zF09coKzJlZmuMq_FV</string>
+    <string name="action_settings">Ucitavanje baze podataka </string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <string name="product_list">Product List</string>
+    <string name="shopping_cart">Korpa</string>
+    <string name="name">Naziv</string>
+    <string name="unit_price">Cijena</string>
+    <string name="quantity">Kol</string>
+    <string name="view">View</string>
+    <string name="action">Action</string>
+    <string name="order">Kupi</string>
+    <string name="price">Iznos </string>
+    <string name="total_price">Ukupna cijena</string>
+    <string name="remove">Remove</string>
+    <string name="clear_cart">Izbrisi</string>
+    <string name="shop">Dodaj artikle</string>
+    <string name="delete_item">Brisi artikal</string>
+    <string name="delete_item_message">Da li zelite izbrisati artikal?</string>
+    <string name="yes">Yes</string>
+    <string name="dodajBazu">Da li ste sigurni da zelite ucitati bazu</string>
+    <string name="no">No</string>
+    <string name="Cijena">Cijena</string>
+    <string name="BarCode">BarCode</string>
+    <string name="Jedinica">Jedinica mjere</string>
+    <string name="Stanje">Stanje</string>
+    <string name="Ispiši">Ispis</string>
+    <string name="Korpa">Korpa</string>
+    <string name="Home">HOME</string>
+    <string name="ucitavanje">Ucitavanje baze</string>
+    <string name="Ne">NE</string>
+    <string name="da">DA</string>
+    <string name="sign_in">SIGN IN</string>
+    <string name="APP_KEY">h01r2htv5wd572y</string>
+    <string name="zavrsetak_svega">Očistiti korpu</string>
+    <string name="cisti_sve">Da li želite da očistite korpu bez snimanja</string>
+    <string name="NazivArtikla">Naziv artikla</string>
+
+</resources>
