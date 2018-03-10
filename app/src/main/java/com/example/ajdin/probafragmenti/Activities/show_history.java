@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -34,7 +35,9 @@ import com.example.ajdin.probafragmenti.R;
 import com.example.ajdin.probafragmenti.adapter.Cart;
 import com.example.ajdin.probafragmenti.adapter.CartHelper;
 import com.example.ajdin.probafragmenti.database.DatabaseHelper;
+import com.example.ajdin.probafragmenti.model.PreviewModel;
 import com.example.ajdin.probafragmenti.model.Product;
+import com.google.gson.Gson;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
@@ -51,12 +54,14 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class show_history extends Fragment {
 
     ListView lstView;
     private String[] lv_arr = {};
     ArrayList<String> files;
+    DatabaseHelper helper;
     Button nazad,brisiSve;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -64,6 +69,7 @@ public class show_history extends Fragment {
 
         lstView=(ListView)view.findViewById(R.id.list_history1);
         lstView.setEmptyView(view.findViewById(R.id.emptyElement));
+        helper=new DatabaseHelper(getActivity());
         ((MainActivity) getActivity())
                 .setActionBarTitle("Pocetna");
 //        if (!tokenExists()){
@@ -122,6 +128,18 @@ public class show_history extends Fragment {
 
                     try {
                         ReadFile(path);
+//                       ArrayList<PreviewModel> previewList = ReadFile(path);
+//                       PreviewFragment fragment=new PreviewFragment();
+//                        android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+//                        getActivity().getSupportFragmentManager().popBackStack();
+//
+//                        Gson gson=new Gson();
+//                        String jsonList= gson.toJson(previewList);
+//                        Bundle bundle=new Bundle();
+//                        bundle.putString("jsonValue",jsonList);
+//                        fragment.setArguments(bundle);
+//                        ft.add(R.id.history_frag,fragment).addToBackStack("preview");
+//                        ft.commit();
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -270,8 +288,9 @@ return suma;
 
         return inFiles;
     }
-   public void ReadFile(String path) throws FileNotFoundException {
+   public ArrayList<PreviewModel> ReadFile(String path) throws FileNotFoundException {
       // File yourFile = new File(Environment.getExternalStorageDirectory()+"/racuni/"+path);
+       ArrayList<PreviewModel> productList = new ArrayList<>();
 
        String csvFile = Environment.getExternalStorageDirectory().toString()+"/racunidevice/"+path;
        BufferedReader br = null;
@@ -283,7 +302,7 @@ return suma;
         StringBuffer buffer=new StringBuffer();
            br = new BufferedReader(new FileReader(csvFile));
            while ((line = br.readLine()) != null) {
-
+               String naziv;
 
                // use comma as separator
                String[] lista = line.split(cvsSplitBy);
@@ -293,11 +312,13 @@ return suma;
                if (lista.length!=3){
                    break;
                }
-               buffer.append(lista[0]+" \t \t "+ lista[2]+"\t  \t"+ lista[1]+"\n");
 
-
+              naziv= helper.getDataString(lista[0]);
+               productList.add(new PreviewModel(naziv,lista[1],lista[2]));
+               buffer.append(naziv+" \t  "+ lista[2]+"\t \t"+ lista[1]+"\n");
            }
-           showMessage("Podaci",buffer.toString(),getActivity());
+
+           showMessage("Naziv artikla  Cijena  Kolicina",buffer.toString(),getActivity());
 
        } catch (FileNotFoundException e) {
            e.printStackTrace();
@@ -312,7 +333,7 @@ return suma;
                }
            }
        }
-
+        return productList;
    }
 
 

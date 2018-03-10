@@ -440,6 +440,7 @@ return view;
 
                 String arrStr[] ={items.get(i).getProduct().getBar_kod(), String.valueOf(items.get(i).getQuantity()), String.valueOf(items.get(i).getProduct().getPrice())};
                 csvWrite.writeNext(arrStr);
+                helper.smanjiKolicinu(items.get(i).getProduct().getBar_kod(),String.valueOf(items.get(i).getQuantity()));
                 csvWrite2.writeNext(arrStr);
 
 

@@ -22,6 +22,7 @@ import com.example.ajdin.probafragmenti.R;
 import com.example.ajdin.probafragmenti.adapter.Cart;
 import com.example.ajdin.probafragmenti.adapter.CartHelper;
 import com.example.ajdin.probafragmenti.constant.Constant;
+import com.example.ajdin.probafragmenti.database.DatabaseHelper;
 import com.example.ajdin.probafragmenti.model.Product;
 
 import java.io.UnsupportedEncodingException;
@@ -38,7 +39,7 @@ public class ProductFragment extends Fragment {
     TextView tvJedinica_mjere;
     EditText new_price;
     EditText Kolicina;
-
+    DatabaseHelper helper;
 
     Button bOrder;
     Product product;
@@ -49,6 +50,7 @@ public class ProductFragment extends Fragment {
 
         Product data = (Product)getArguments().getSerializable("product");
         product=data;
+        helper=new DatabaseHelper(getActivity());
         tvProductName = (TextView)view.findViewById(R.id.tvProductName);
         tvBarCode = (TextView) view.findViewById(R.id.tvBarCode);
         tvProductPrice = (TextView)view. findViewById(R.id.tvProductPrice);
@@ -79,33 +81,42 @@ public class ProductFragment extends Fragment {
                 Cart cart = CartHelper.getCart();
                 // Log.d(TAG, "Adding product: " + product.getName());
                 if (Kolicina.getText().toString().matches("^[0-9]\\d*(\\.\\d+)?$")) {//unesena kolicina
-                    if (new_price.getText().toString().trim().matches("")) { //nema cijene
-                        cart.add(product, Double.valueOf(Kolicina.getText().toString()) , "");//cijena ""
+                    if (new_price.getText().toString().trim().matches("")) {
+                        if (helper.checkKolicina(Kolicina.getText().toString(),tvBarCode.getText().toString())) {//nema cijene
+                            cart.add(product, Double.valueOf(Kolicina.getText().toString()), "");//cijena ""
 
-                        MainAcitivityFragment fragment = new MainAcitivityFragment();
-                        android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ft.replace(R.id.fragment_swap, fragment);
-                        ft.commit();
-
+                            MainAcitivityFragment fragment = new MainAcitivityFragment();
+                            android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                            ft.replace(R.id.fragment_swap, fragment);
+                            ft.commit();
+                        }
+                        else {
+                            Toast.makeText(getActivity(), "Nemamo na stanju ! ", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
                         if (!new_price.getText().toString().matches("^[0-9]\\d*(\\.\\d+)?$")) {
                             new_price.setText("");
                             Toast.makeText(getActivity(), "Niste unijeli dobar format cijene,unosi se sa '.' ", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        product.setpPrice(BigDecimal.valueOf(Double.valueOf(new_price.getText().toString())));
-                        cart.add(product, Double.valueOf(Kolicina.getText().toString()), new_price.getText().toString());
-                        BigDecimal decimal = BigDecimal.valueOf(Double.valueOf(new_price.getText().toString()));
-                        product.setpPrice(decimal);
+                        if (helper.checkKolicina(Kolicina.getText().toString(), tvBarCode.getText().toString())) {
+                            product.setpPrice(BigDecimal.valueOf(Double.valueOf(new_price.getText().toString())));
+                            cart.add(product, Double.valueOf(Kolicina.getText().toString()), new_price.getText().toString());
+                            BigDecimal decimal = BigDecimal.valueOf(Double.valueOf(new_price.getText().toString()));
+                            product.setpPrice(decimal);
 
-                        // ovdje ne moze ici Main
-                        MainAcitivityFragment fragment = new MainAcitivityFragment();
-                        android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        getActivity().getSupportFragmentManager().popBackStack();
-                        ft.replace(R.id.fragment_swap, fragment);
-                        ft.commit();
+                            // ovdje ne moze ici Main
+                            MainAcitivityFragment fragment = new MainAcitivityFragment();
+                            android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                            getActivity().getSupportFragmentManager().popBackStack();
+                            ft.replace(R.id.fragment_swap, fragment);
+                            ft.commit();
 
-                        return;
+                            return;
+                        }
+                        else {
+                            Toast.makeText(getActivity(), "Nemamo na stanju ! ", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 } else {
                     Kolicina.setText("");

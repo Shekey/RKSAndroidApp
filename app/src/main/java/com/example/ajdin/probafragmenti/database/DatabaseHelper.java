@@ -253,6 +253,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return product;
 
     }
+    public String getDataString(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor productList = db.rawQuery("select * from Artikli  where Bar_kod='" + id + "'", null);
+        if (productList.getCount()==0){
+
+            return null;
+        }
+        productList.moveToFirst();
+        BigDecimal decimal= BigDecimal.valueOf(Double.valueOf(productList.getString(3)));
+        Product product=new Product(productList.getString(0),productList.getString(1),decimal,productList.getString(4),productList.getString(2),productList.getString(5));
+        db.close();
+        return product.getName();
+
+    }
+
 
 
     public Cursor getAllData() {
@@ -262,7 +277,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return res;
 
     }
+    public void smanjiKolicinu(String bk,String kolicina){
+        SQLiteDatabase db = this.getWritableDatabase();
 
+        db.execSQL("UPDATE Artikli SET Stanje=Stanje-"+kolicina+" WHERE bar_kod='"+bk+"';");
+
+    }
+
+    public boolean checkKolicina(String kolicina,String Bar){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Double value,value2;
+        double sum;
+        Cursor productList = db.rawQuery("select * from Artikli  where Bar_kod='" + Bar + "'", null);
+        if (productList != null ) {
+            if (productList.moveToFirst()){
+                String Stanje = productList.getString(productList.getColumnIndex("Stanje"));
+                value=Double.valueOf(Stanje);
+                value2=Double.valueOf(kolicina);
+                sum=value-value2;
+               if (sum>=0.0){
+                   return true;
+
+               }
+               else {
+                   return false;
+               }
+            }
+        }
+
+            return false;
+
+    }
 
 
      public void showMessage(String title, String message, Context context) {
