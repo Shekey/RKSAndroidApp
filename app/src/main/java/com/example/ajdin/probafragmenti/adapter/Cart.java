@@ -92,6 +92,16 @@ public class Cart implements Serializable {
         totalPrice = totalPrice.subtract(sellable.getPrice().multiply(BigDecimal.valueOf(quantity)));
         totalQuantity -= quantity;
     }
+    public double getKolicinaUkupno(Saleable sellable){
+        double suma =0.0;
+        for (Entry<Saleable, Double> entry : cartItemMap.entrySet()) {
+           if (entry.getKey().getName().equals(sellable.getName())){
+               suma+=entry.getValue();
+           }
+        }
+        return suma;
+
+    }
 
     /**
      * Remove a {@link Saleable} product from this shopping cart totally

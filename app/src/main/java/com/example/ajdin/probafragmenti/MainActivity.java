@@ -21,6 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ import com.dropbox.core.v2.files.DownloadErrorException;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.example.ajdin.probafragmenti.Activities.DropboxClient;
 import com.example.ajdin.probafragmenti.Activities.LoginActivity;
+import com.example.ajdin.probafragmenti.Activities.MainAcitivityFragment;
 import com.example.ajdin.probafragmenti.Activities.NameFragment;
 import com.example.ajdin.probafragmenti.Activities.show_history;
 import com.example.ajdin.probafragmenti.adapter.Cart;
@@ -162,14 +164,28 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed()
     {
+        int count=0;
+
         if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis())
         {
             super.onBackPressed();
             return;
         }
-        else { Toast.makeText(getBaseContext(), "Pritisnite jos jednom nazad za izlazak iz aplikacije.", Toast.LENGTH_SHORT).show(); }
+        else {
+            if (getSupportFragmentManager().getBackStackEntryCount() >0) {
+                MainAcitivityFragment fragment = new MainAcitivityFragment();
+                android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.mainfragment, fragment);
+                getSupportFragmentManager().popBackStack(R.id.mainfragment,FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                ft.commit();
+            } else {
+                Toast.makeText(getBaseContext(), "Pritisnite jos jednom nazad za izlazak iz aplikacije.", Toast.LENGTH_SHORT).show();
+            }
 
+        }
         mBackPressed = System.currentTimeMillis();
+
+
     }
 //    @Override
 //    public boolean onKeyDown(int keyCode, KeyEvent event) {

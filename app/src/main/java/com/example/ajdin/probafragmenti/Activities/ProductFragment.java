@@ -43,12 +43,14 @@ public class ProductFragment extends Fragment {
 
     Button bOrder;
     Product product;
+    private Cart cart;
+    private Double kol;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_product, container, false);
 
 
-        Product data = (Product)getArguments().getSerializable("product");
+        final Product data = (Product)getArguments().getSerializable("product");
         product=data;
         helper=new DatabaseHelper(getActivity());
         tvProductName = (TextView)view.findViewById(R.id.tvProductName);
@@ -63,6 +65,8 @@ public class ProductFragment extends Fragment {
         Kolicina.clearFocus();
         ((MainActivity) getActivity())
                 .setActionBarTitle("Detalji artikla");
+        cart = CartHelper.getCart();
+        kol = cart.getKolicinaUkupno(data);
 
         try {
             setProductProperties();
@@ -78,47 +82,59 @@ public class ProductFragment extends Fragment {
         bOrder.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Cart cart = CartHelper.getCart();
-                // Log.d(TAG, "Adding product: " + product.getName());
-                if (Kolicina.getText().toString().matches("^[0-9]\\d*(\\.\\d+)?$")) {//unesena kolicina
-                    if (new_price.getText().toString().trim().matches("")) {
-                        if (helper.checkKolicina(Kolicina.getText().toString(),tvBarCode.getText().toString())) {//nema cijene
-                            cart.add(product, Double.valueOf(Kolicina.getText().toString()), "");//cijena ""
 
-                            MainAcitivityFragment fragment = new MainAcitivityFragment();
-                            android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                            ft.replace(R.id.fragment_swap, fragment);
-                            ft.commit();
-                        }
-                        else {
-                            Toast.makeText(getActivity(), "Nemamo na stanju ! ", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        if (!new_price.getText().toString().matches("^[0-9]\\d*(\\.\\d+)?$")) {
-                            new_price.setText("");
-                            Toast.makeText(getActivity(), "Niste unijeli dobar format cijene,unosi se sa '.' ", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        if (helper.checkKolicina(Kolicina.getText().toString(), tvBarCode.getText().toString())) {
-                            product.setpPrice(BigDecimal.valueOf(Double.valueOf(new_price.getText().toString())));
-                            cart.add(product, Double.valueOf(Kolicina.getText().toString()), new_price.getText().toString());
-                            BigDecimal decimal = BigDecimal.valueOf(Double.valueOf(new_price.getText().toString()));
-                            product.setpPrice(decimal);
+               if (!Kolicina.getText().toString().isEmpty()) {
+                   // Log.d(TAG, "Adding product: " + product.getName());
+                   if (Double.valueOf(Kolicina.getText().toString()) > 0.0) {//unesena kolicina
+                       if (new_price.getText().toString().trim().matches("")) {
 
-                            // ovdje ne moze ici Main
-                            MainAcitivityFragment fragment = new MainAcitivityFragment();
-                            android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                            getActivity().getSupportFragmentManager().popBackStack();
-                            ft.replace(R.id.fragment_swap, fragment);
-                            ft.commit();
+                           if (helper.checkKolicina(Kolicina.getText().toString(), tvBarCode.getText().toString(), kol)) {//nema cijene
+                               cart.add(product, Double.valueOf(Kolicina.getText().toString()), "");//cijena ""
 
-                            return;
-                        }
-                        else {
-                            Toast.makeText(getActivity(), "Nemamo na stanju ! ", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                } else {
+                               MainAcitivityFragment fragment = new MainAcitivityFragment();
+                               android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                               ft.replace(R.id.fragment_swap, fragment);
+                               ft.commit();
+                           } else {
+                               Toast.makeText(getActivity(), "Nemamo na stanju ! ", Toast.LENGTH_SHORT).show();
+                           }
+                       } else {
+//                        ^[0-9]\d*(\.\d+)?$
+                           if (!new_price.getText().toString().matches("^[0-9]\\d*(\\.[1-9])?$")) {
+                               new_price.setText("");
+                               Toast.makeText(getActivity(), "Niste unijeli dobar format cijene,unosi se sa '.' ", Toast.LENGTH_SHORT).show();
+                               return;
+                           }
+                           if (Double.valueOf(new_price.getText().toString()) > 0.0) {//unesena kolicina
+                               if (helper.checkKolicina(Kolicina.getText().toString(), tvBarCode.getText().toString(), kol)) {
+                                   product.setpPrice(BigDecimal.valueOf(Double.valueOf(new_price.getText().toString())));
+                                   cart.add(product, Double.valueOf(Kolicina.getText().toString()), new_price.getText().toString());
+                                   BigDecimal decimal = BigDecimal.valueOf(Double.valueOf(new_price.getText().toString()));
+                                   product.setpPrice(decimal);
+
+                                   // ovdje ne moze ici Main
+                                   MainAcitivityFragment fragment = new MainAcitivityFragment();
+                                   android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                                   ft.replace(R.id.fragment_swap, fragment);
+                                   ft.commit();
+
+                                   return;
+                               } else {
+                                   Toast.makeText(getActivity(), "Nemamo na stanju !", Toast.LENGTH_SHORT).show();
+                               }
+                           } else {
+                               Toast.makeText(getActivity(), "Unesite cijenu vecu od 0.0", Toast.LENGTH_SHORT).show();
+                           }
+
+                       }
+                   }
+                   else {
+                       Kolicina.setText("");
+                       Toast.makeText(getActivity(), " Unesite kolicinu vecu od 0", Toast.LENGTH_SHORT).show();
+                       Kolicina.requestFocus();
+                   }
+               }
+               else {
                     Kolicina.setText("");
                     Toast.makeText(getActivity(), " Unesite kolicinu", Toast.LENGTH_SHORT).show();
                     Kolicina.requestFocus();
@@ -188,10 +204,13 @@ return view;
     }
 
     private void setProductProperties() throws UnsupportedEncodingException {
-
+        double stanjecalculated=Double.valueOf(product.getStanje())-kol;
+        if (stanjecalculated<0.0){
+            stanjecalculated=0.0;
+        }
         tvProductName.setText(product.getName());
         tvProductPrice.setText(product.getPrice().toString());
-        tvStanje.setText(product.getStanje());
+        tvStanje.setText(String.valueOf(stanjecalculated));
         tvBarCode.setText(product.getBar_kod());
         tvJedinica_mjere.setText(product.getJedinica_mjere());
         Kolicina.requestFocus();

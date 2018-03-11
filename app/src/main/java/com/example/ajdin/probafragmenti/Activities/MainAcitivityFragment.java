@@ -241,7 +241,7 @@ public class MainAcitivityFragment extends Fragment {
                     android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
 
                     fragment.setArguments(bundle);
-                    ft.replace(R.id.mainfragment, fragment).addToBackStack("product");
+                    ft.replace(R.id.mainfragment, fragment).addToBackStack("productFrag");
                     ft.commit();
 
                     return true;
@@ -272,7 +272,7 @@ public class MainAcitivityFragment extends Fragment {
                 ProductFragment fragment = new ProductFragment();
                 android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                 fragment.setArguments(bundle);
-                ft.replace(R.id.mainfragment, fragment);
+                ft.replace(R.id.mainfragment, fragment).addToBackStack("productFrag");
 
 
                 ft.commit();
@@ -350,6 +350,7 @@ return view;
                 String arrStr[] ={cartItems.get(i).getProduct().getBar_kod(), String.valueOf(cartItems.get(i).getQuantity()), String.valueOf(cartItems.get(i).getProduct().getPrice())};
 
                 csvWrite.writeNext(arrStr);
+                helper.smanjiKolicinu(cartItems.get(i).getProduct().getBar_kod(),String.valueOf(cartItems.get(i).getQuantity()));
                 csvWrite2.writeNext(arrStr);
 
             }

@@ -284,9 +284,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public boolean checkKolicina(String kolicina,String Bar){
+    public boolean checkKolicina(String kolicina,String Bar,double kol){
         SQLiteDatabase db = this.getWritableDatabase();
         Double value,value2;
+        double kolicinaget=kol;
         double sum;
         Cursor productList = db.rawQuery("select * from Artikli  where Bar_kod='" + Bar + "'", null);
         if (productList != null ) {
@@ -294,7 +295,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String Stanje = productList.getString(productList.getColumnIndex("Stanje"));
                 value=Double.valueOf(Stanje);
                 value2=Double.valueOf(kolicina);
-                sum=value-value2;
+                sum=value-value2-kol;
                if (sum>=0.0){
                    return true;
 

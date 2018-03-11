@@ -129,7 +129,6 @@ public class NameFragment extends Fragment {
 
                  MainAcitivityFragment fragment = new MainAcitivityFragment();
                     android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    getActivity().getSupportFragmentManager().popBackStack();
 
                     SharedPreferences sharedPreferences=getActivity().getSharedPreferences("podaci",Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor=sharedPreferences.edit();
@@ -159,7 +158,6 @@ public class NameFragment extends Fragment {
                 //TREBA OVDJE URADITI
                 MainAcitivityFragment fragment = new MainAcitivityFragment();
                 android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                getActivity().getSupportFragmentManager().popBackStack();
                 SharedPreferences sharedPreferences=getActivity().getSharedPreferences("podaci",Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor=sharedPreferences.edit();
                 editor.putString("path",path);

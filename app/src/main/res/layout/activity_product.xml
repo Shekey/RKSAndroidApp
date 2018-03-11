@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/grey"
-android:id="@+id/fragment_swap"
+    android:id="@+id/fragment_swap"
     tools:ignore="ExtraText">
 
     <LinearLayout
