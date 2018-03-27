@@ -39,6 +39,13 @@
                 <!--<category android:name="android.intent.category.DEFAULT" />-->
             </intent-filter>
         </activity>
+        <!--<service-->
+            <!--android:name=".TimeService"-->
+
+            <!--android:exported="false"-->
+            <!--android:label="@string/service_name"-->
+            <!--&gt;-->
+        <!--</service>-->
     </application>
 
 

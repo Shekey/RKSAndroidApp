@@ -7,8 +7,12 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -31,6 +35,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.dropbox.client2.DropboxAPI;
+import com.dropbox.client2.android.AndroidAuthSession;
+import com.dropbox.client2.exception.DropboxException;
+import com.dropbox.client2.session.AppKeyPair;
+import com.dropbox.core.DbxException;
+import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.Metadata;
 import com.example.ajdin.probafragmenti.MainActivity;
 import com.example.ajdin.probafragmenti.R;
 import com.example.ajdin.probafragmenti.adapter.Cart;
@@ -50,8 +62,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-
-
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class NameFragment extends Fragment {
@@ -60,9 +73,18 @@ public class NameFragment extends Fragment {
     EditText txt;
     TextView txtView;
     ListView lstView;
-    private String[] lv_arr = {};
-    ArrayList<String> files;
-//    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+    private List<Metadata> lv_arr;
+    public ArrayList<String> files;
+    public ArrayList<String> Kfiles;
+    public static final long NOTIFY_INTERVAL = 10 * 3000; // 10 seconds
+
+    // run on another Thread to avoid crash
+    private Handler mHandler = new Handler();
+    // timer handling
+    private Timer mTimer = null;
+
+    private ArrayAdapter<String> arrayAdapter;
+    //    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.name,container,false);
@@ -74,6 +96,14 @@ public class NameFragment extends Fragment {
         lstView=(ListView)view.findViewById(R.id.list_history);
         lstView.setEmptyView(view.findViewById(R.id.emptyElement2));
         txt.requestFocus();
+        if (mTimer != null) {
+            mTimer.cancel();
+        } else {
+            // recreate new
+            mTimer = new Timer();
+        }
+
+        // schedule task
 
 //        if (!tokenExists()){
 //
@@ -86,10 +116,20 @@ public class NameFragment extends Fragment {
         int permissionCheck = ContextCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.READ_EXTERNAL_STORAGE);
         if (permissionCheck== PackageManager.PERMISSION_GRANTED) {
-            files = getList();
+//            lv_arr = getListFile("/Racuni/");
+//            List<String> strings=new ArrayList<String>();
+//            for (Metadata m:lv_arr) {
+//                strings.add(m.getPathDisplay());
+//
+//            }
+            Kfiles=getList();
+            files=new ArrayList<>();
+
+//            new GetList(DropboxClient.getClient("aLRppJLoiTAAAAAAAAAABt0hedpD0SdE5AcEPMR5neXz-_zF09coKzJlZmuMq_FV"), getActivity()).execute();
+
 
             //lv_arr = (String[]) listOfStrings.toArray();
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_2, android.R.id.text1, files) {
+            arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_2, android.R.id.text1, files) {
 
                 @NonNull
                 @Override
@@ -116,6 +156,7 @@ public class NameFragment extends Fragment {
             };
 
             lstView.setAdapter(arrayAdapter);
+            mTimer.scheduleAtFixedRate(new TimeDisplayTimerTask(), 0, NOTIFY_INTERVAL);
 
         }
         btn.setOnClickListener(new View.OnClickListener() {
@@ -216,7 +257,41 @@ public class NameFragment extends Fragment {
         String accessToken = prefs.getString("access-token", null);
         return accessToken != null;
     }
+    public List<Metadata> getListFile(String path) {
 
+        DbxRequestConfig config = new DbxRequestConfig("dropbox/AjdinovProjekt", "en_US");
+        DbxClientV2 client = new DbxClientV2(config, "aLRppJLoiTAAAAAAAAAABt0hedpD0SdE5AcEPMR5neXz-_zF09coKzJlZmuMq_FV");
+        if (client == null) {
+            return null;
+        }
+
+        try {
+            return client.files().listFolder(path).getEntries();
+        } catch (DbxException e) {
+            return null;
+        }
+
+    }
+
+public String [] getLv_arr() throws DropboxException {
+    String[] fnames = null;
+    int i=0;
+    AppKeyPair appKeys = new AppKeyPair("h01r2htv5wd572y", "48g39vbfomaym0i");
+    AndroidAuthSession session = new AndroidAuthSession(appKeys);
+    DropboxAPI<AndroidAuthSession> mApi = new DropboxAPI<>(session);
+    DropboxAPI.Entry dirent = mApi.metadata("/Racuni/", 1000, null, true, null);
+    ArrayList<DropboxAPI.Entry> files = new ArrayList<DropboxAPI.Entry>();
+    ArrayList<String> dir=new ArrayList<String>();
+    for (DropboxAPI.Entry ent: dirent.contents)
+    {
+        files.add(ent);// Add it to the list of thumbs we can choose from
+        //dir = new ArrayList<String>();
+        dir.add(new String(files.get(i++).path));
+    }
+    fnames=dir.toArray(new String[dir.size()]);
+
+    return fnames;
+}
     private ArrayList<String> getList() {
 
         ArrayList<String> inFiles = new ArrayList<String>();
@@ -419,10 +494,126 @@ public class NameFragment extends Fragment {
 
     }
 
+    class GetList extends AsyncTask {
+
+        private DbxClientV2 dbxClient;
+
+        private Context context;
+        private ArrayList<String> lista;
+        private List<Metadata> meta;
+
+        public GetList(DbxClientV2 dbxClient, Context context) {
+            this.dbxClient = dbxClient;
+            this.context = context;
+        }
+
+        @Override
+        protected Object doInBackground(Object[] params) {
+            try {
+
+                meta = dbxClient.files().listFolder("/Racuni").getEntries();
+
+
+                Log.d("Upload Status", "Success");
+            } catch (DbxException e) {
+                e.printStackTrace();
+            }
+            return null;
+
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+            lista=new ArrayList<>();
+            for (Metadata m:meta) {
+                lista.add(m.getName());
+            }
+            Kfiles=getListD(lista);
+            files.clear();
+            for (String s : Kfiles){
+                arrayAdapter.add(s);
+            }
+
+            arrayAdapter.notifyDataSetChanged();
 
 
 
 
+
+        }
+    }
+    private ArrayList<String> getListD(ArrayList<String> lusi) {
+
+        ArrayList<String> inFiles = new ArrayList<String>();
+        File exportDir = new File(Environment.getExternalStorageDirectory(), "racuni");
+        File exportDir2 = new File(Environment.getExternalStorageDirectory(), "racunidevice");
+        if (!exportDir.exists())
+        {
+            exportDir.mkdirs();
+        }
+        if (!exportDir2.exists())
+        {
+            exportDir2.mkdirs();
+        }
+        String path = Environment.getExternalStorageDirectory().toString()+"/racunidevice";
+        Log.d("Files", "Path: " + path);
+        File directory = new File(path);
+
+        String[] files = directory.list();
+        Log.d("Files", "Size: "+ files.length);
+        int count=files.length-1;
+        while (count>0||count==0){
+            if (files[count].equals("Artikli.txt") || files[count].equals("desktop.ini")){
+                if (count == 0) {
+                    break;
+                }
+                --count;
+            }
+            inFiles.add(files[count--]);
+
+        }
+        ArrayList<String> kopija=new ArrayList<>();
+
+        for (String d:inFiles){
+            for (String dd:lusi){
+                if (d.equals(dd)){
+                    kopija.add(dd);
+
+                }
+            }
+
+        }
+
+        return kopija;
+    }
+    class TimeDisplayTimerTask extends TimerTask {
+
+        @Override
+        public void run() {
+            // run on another thread
+            mHandler.post(new Runnable() {
+
+                @Override
+                public void run() {
+//                    ConnectivityManager wifi = (ConnectivityManager)getActivity().getSystemService(getContext().CONNECTIVITY_SERVICE);
+//                    NetworkInfo info=wifi.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+//                    if (info.isConnected()) {
+                        new GetList(DropboxClient.getClient("aLRppJLoiTAAAAAAAAAABt0hedpD0SdE5AcEPMR5neXz-_zF09coKzJlZmuMq_FV"), getActivity()).execute();
+//                    }
+//                    else {
+//                        Toast.makeText(getContext(), "Nemate interneta", Toast.LENGTH_SHORT).show();
+//                    }
+
+                }
+                // display toast
+
+
+            });
+        }
+
+
+    }
 
 
 

@@ -97,6 +97,7 @@ public class MainAcitivityFragment extends Fragment {
         }
 
 
+
         ListView lvProducts = (ListView)view.findViewById(R.id.lvProducts);
       //  lvProducts.addHeaderView(getActivity().getLayoutInflater().inflate(R.layout.cart_header, lvProducts, false));
         //

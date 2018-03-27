@@ -203,7 +203,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
 
-
+        db.close();
 
 
     }
@@ -222,12 +222,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       //  long result = db.insert("Artikli", null, contentValues);
 
         if (result == -1) {
-
+            db.close();
             return false;
         } else {
-
+            db.close();
             return true;
         }
+
     }
     public Cursor getAll(){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -244,6 +245,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor productList = db.rawQuery("select * from Artikli  where Bar_kod='" + id + "'", null);
         if (productList.getCount()==0){
             Product product=null;
+            db.close();
             return product;
         }
         productList.moveToFirst();
@@ -257,7 +259,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor productList = db.rawQuery("select * from Artikli  where Bar_kod='" + id + "'", null);
         if (productList.getCount()==0){
-
+            db.close();
             return null;
         }
         productList.moveToFirst();
@@ -274,6 +276,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         Cursor res = db.rawQuery("select * from Artikli " , null);
+
         return res;
 
     }
@@ -281,6 +284,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         db.execSQL("UPDATE Artikli SET Stanje=Stanje-"+kolicina+" WHERE bar_kod='"+bk+"';");
+        db.close();
 
     }
 
@@ -297,15 +301,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 value2=Double.valueOf(kolicina);
                 sum=value-value2-kol;
                if (sum>=0.0){
+                   db.close();
                    return true;
 
                }
                else {
+                   db.close();
                    return false;
                }
             }
         }
-
+        db.close();
             return false;
 
     }

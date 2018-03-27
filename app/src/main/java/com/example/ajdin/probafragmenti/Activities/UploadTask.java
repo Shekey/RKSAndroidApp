@@ -7,12 +7,14 @@ import android.widget.Toast;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.WriteMode;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
  * Created by ajdin on 12/3/2017.
@@ -38,6 +40,7 @@ public class UploadTask extends AsyncTask {
             dbxClient.files().uploadBuilder("/Racuni/" + file.getName()) //Path in the user's Dropbox to save the file.
                     .withMode(WriteMode.OVERWRITE) //always overwrite existing file
                     .uploadAndFinish(inputStream);
+
             Log.d("Upload Status", "Success");
         } catch (DbxException e) {
             e.printStackTrace();
@@ -45,6 +48,7 @@ public class UploadTask extends AsyncTask {
             e.printStackTrace();
         }
         return null;
+
     }
 
     @Override

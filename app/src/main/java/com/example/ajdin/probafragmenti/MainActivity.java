@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 
 import android.app.AlertDialog;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -42,6 +43,7 @@ import com.example.ajdin.probafragmenti.Activities.DropboxClient;
 import com.example.ajdin.probafragmenti.Activities.LoginActivity;
 import com.example.ajdin.probafragmenti.Activities.MainAcitivityFragment;
 import com.example.ajdin.probafragmenti.Activities.NameFragment;
+import com.example.ajdin.probafragmenti.Activities.PreviewFragment;
 import com.example.ajdin.probafragmenti.Activities.show_history;
 import com.example.ajdin.probafragmenti.adapter.Cart;
 import com.example.ajdin.probafragmenti.adapter.CartHelper;
@@ -76,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
 
                 } else {
 
@@ -127,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new NameFragment(), "NOVI RAČUN");
         adapter.addFragment(new show_history(), "HISTORIJA RAČUNA");
-
         viewPager.setAdapter(adapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -154,7 +156,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+//        Intent intent = new Intent(this, TimeService.class);
+//        startService(intent);
 
     }
 
@@ -548,4 +551,5 @@ public void ucitaj_artikle(){
 
 
     }
+
 }

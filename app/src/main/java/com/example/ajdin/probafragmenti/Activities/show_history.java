@@ -51,6 +51,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -115,6 +116,7 @@ public class show_history extends Fragment {
             lstView.setAdapter(arrayAdapter);
 
             lstView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                private ArrayList<PreviewModel> models;
                 public static final String TAG = "NAME ACTIVITY";
 
                 @Override
@@ -127,7 +129,7 @@ public class show_history extends Fragment {
                     String path = files.get(position);
 
                     try {
-                        ReadFile(path);
+                        models = ReadFile(path);
 //                       ArrayList<PreviewModel> previewList = ReadFile(path);
 //                       PreviewFragment fragment=new PreviewFragment();
 //                        android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
@@ -142,6 +144,17 @@ public class show_history extends Fragment {
 //                        ft.commit();
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
+                    }
+                    finally {
+                        PreviewFragment fragment=new PreviewFragment();
+                        Bundle bundle=new Bundle();
+                        bundle.putSerializable("listPreview",(Serializable) models);
+                        fragment.setArguments(bundle);
+                       fragment.show(getActivity().getSupportFragmentManager(),"dijalog_preview");
+                       fragment.setTargetFragment(show_history.this,1);
+
+
+
                     }
 
 
@@ -315,10 +328,10 @@ return suma;
 
               naziv= helper.getDataString(lista[0]);
                productList.add(new PreviewModel(naziv,lista[1],lista[2]));
-               buffer.append(naziv+" \t  "+ lista[2]+"\t \t"+ lista[1]+"\n");
+//               buffer.append(naziv+" \t  "+ lista[2]+"\t \t"+ lista[1]+"\n");
            }
 
-           showMessage("Naziv artikla  Cijena  Kolicina",buffer.toString(),getActivity());
+//           showMessage("Naziv artikla  Cijena  Kolicina",buffer.toString(),getActivity());
 
        } catch (FileNotFoundException e) {
            e.printStackTrace();
